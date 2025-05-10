@@ -1,3 +1,4 @@
+// src/main/java/org/example/controllers/LayoutController.java
 package org.example.controllers;
 
 import javafx.fxml.FXML;
@@ -6,13 +7,14 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
+
+import javafx.stage.Stage;
 import org.example.entities.User;
 import org.example.entities.Role;
 
@@ -21,34 +23,25 @@ import java.io.File;
 public class LayoutController {
 
     @FXML private VBox sidebar;
-    @FXML private Button btnDashboard, btnUsers, btnTickets, btnReclamations, btnSponsors, btnLogout;
+    @FXML private Button btnDashboard, btnUsers, btnTickets,
+            btnReclamations, btnSponsors, btnLogout;
     @FXML private StackPane contentPane;
-
     @FXML private Label userNameLabel;
     @FXML private Label profileLabel;
     @FXML private ImageView topbarProfileImage;
 
     private User currentUser;
 
+    // called once when currentUser is set (at login)
     protected void onUserSet() {
         Role role = currentUser.getRole();
         String roleName = (role != null) ? role.getName() : "En_attente";
+        profileLabel.setText(currentUser.getPrenom() + " " + currentUser.getNom());
 
-        String fullName = currentUser.getPrenom() + " " + currentUser.getNom();
-        profileLabel.setText(fullName);
+        // load the avatar initially
+        refreshTopbarProfileImage();
 
-        // Load profile picture if exists
-        if (currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
-            File imgFile = new File(System.getProperty("user.dir"), currentUser.getProfilePicture());
-            if (imgFile.exists()) {
-                topbarProfileImage.setImage(new Image(imgFile.toURI().toString()));
-                topbarProfileImage.setFitWidth(30);
-                topbarProfileImage.setFitHeight(30);
-                Circle clip = new Circle(15, 15, 15);
-                topbarProfileImage.setClip(clip);
-            }
-        }
-
+        // show/hide menu buttons by role
         btnDashboard.setVisible(true);
         btnLogout.setVisible(true);
         btnUsers.setVisible("admin".equals(roleName));
@@ -59,15 +52,30 @@ public class LayoutController {
         loadContent("/Dashboard.fxml");
     }
 
+    /**
+     * NEW: call this whenever the profilePicture path changes
+     * so the top‐bar ImageView is reloaded.
+     */
+    public void refreshTopbarProfileImage() {
+        if (currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            File imgFile = new File(System.getProperty("user.dir"),
+                    currentUser.getProfilePicture());
+            if (imgFile.exists()) {
+                topbarProfileImage.setImage(new Image(imgFile.toURI().toString()));
+                topbarProfileImage.setFitWidth(30);
+                topbarProfileImage.setFitHeight(30);
+                Circle clip = new Circle(15, 15, 15);
+                topbarProfileImage.setClip(clip);
+            }
+        }
+    }
+
     @FXML private void goDashboard()    { loadContent("/Dashboard.fxml"); }
     @FXML private void goUsers()        { loadContent("/UserList.fxml"); }
     @FXML private void goTickets()      { loadContent("/Tickets.fxml"); }
     @FXML private void goReclamations() { loadContent("/Reclamations.fxml"); }
     @FXML private void goSponsors()     { loadContent("/Sponsors.fxml"); }
-
-    @FXML private void goProfile() {
-        loadContent("/Profile.fxml");
-    }
+    @FXML private void goProfile()      { loadContent("/Profile.fxml"); }
 
     @FXML private void logout() {
         try {
@@ -87,11 +95,9 @@ public class LayoutController {
             ex.printStackTrace();
         }
     }
-
     public void loadContentNode(Node node) {
         contentPane.getChildren().setAll(node);
     }
-
     public void setCurrentUser(User user) {
         this.currentUser = user;
         onUserSet();
@@ -104,13 +110,10 @@ public class LayoutController {
     @FXML
     private void showUserMenu(MouseEvent event) {
         ContextMenu menu = new ContextMenu();
-
         MenuItem editProfile = new MenuItem("Modifier Profil");
         MenuItem logoutItem  = new MenuItem("Déconnexion");
-
         editProfile.setOnAction(e -> goProfile());
         logoutItem.setOnAction(e -> logout());
-
         menu.getItems().addAll(editProfile, logoutItem);
         menu.show(profileLabel, Side.BOTTOM, 0, 0);
     }

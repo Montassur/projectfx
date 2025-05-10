@@ -2,7 +2,6 @@
 /home/teg/Desktop/fx/src/main/java/org/example/tests/MainFx.java
 /home/teg/Desktop/fx/src/main/java/org/example/controllers/ManagerHomeController.java
 /home/teg/Desktop/fx/src/main/java/org/example/controllers/ForgotPasswordController.java
-/home/teg/Desktop/fx/src/main/java/org/example/controllers/QRTokenManager.java
 /home/teg/Desktop/fx/src/main/java/org/example/services/MailService.java
 /home/teg/Desktop/fx/src/main/java/org/example/controllers/ProfileController.java
 /home/teg/Desktop/fx/src/main/java/org/example/MainApp.java

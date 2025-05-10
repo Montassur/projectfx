@@ -28,6 +28,8 @@ public class LoginController {
     @FXML private PasswordField passwordField;
     @FXML private Label messageLabel;
 
+
+    private Stage qrPopup;
     private final AuthService authService = MainApp.AUTH_SERVICE;
 
     @FXML
@@ -121,6 +123,9 @@ public class LoginController {
                                             showAlert("Compte inactif", "Votre compte est en attente d'activation.");
                                             return;
                                         }
+                                        if (qrPopup != null) {
+                                            qrPopup.close(); // ✅ Fermer le popup QR
+                                        }
 
                                         showAlert("Succès", "QR Code vérifié. Connexion réussie !");
                                         if (user.getRole() != null && "admin".equals(user.getRole().getName())) {
@@ -147,16 +152,18 @@ public class LoginController {
     }
 
     private void showQRPopup(String url) {
+
         ImageView qrView = new ImageView("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + url);
         VBox box = new VBox(10, new Label("Scannez ce QR avec votre téléphone"), qrView);
         box.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
-        Stage popup = new Stage();
-        popup.initModality(Modality.APPLICATION_MODAL);
-        popup.setTitle("Connexion QR");
-        popup.setScene(new Scene(box));
-        popup.show();
+        qrPopup = new Stage(); // save reference
+        qrPopup.initModality(Modality.APPLICATION_MODAL);
+        qrPopup.setTitle("Connexion QR");
+        qrPopup.setScene(new Scene(box));
+        qrPopup.show();
     }
+
 
     private void goToMainLayout(User user) {
         try {

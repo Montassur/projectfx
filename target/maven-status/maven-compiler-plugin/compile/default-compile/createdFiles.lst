@@ -12,13 +12,11 @@ org/example/controllers/UserListController$1.class
 org/example/utils/MyDataBase.class
 org/example/controllers/DashboardController.class
 org/example/services/ICrud.class
-org/example/controllers/QRTokenManager$QRToken.class
 org/example/dao/UserDAO.class
 org/example/tests/MainFx.class
 org/example/controllers/HomeControllerBase.class
 org/example/tests/Main.class
 org/example/controllers/LoginController$1.class
-org/example/controllers/QRTokenManager.class
 org/example/controllers/UserListController.class
 org/example/controllers/ManagerHomeController.class
 org/example/services/MailService.class

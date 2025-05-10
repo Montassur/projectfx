@@ -1,3 +1,4 @@
+// src/main/java/org/example/controllers/ProfileController.java
 package org.example.controllers;
 
 import javafx.fxml.FXML;
@@ -34,7 +35,7 @@ public class ProfileController {
     public void initialize() {
         currentUser = MainApp.LAYOUT_CONTROLLER.getCurrentUser();
 
-        // Make the profile image circular
+        // Make the profile image circular in the form
         Circle clip = new Circle(50, 50, 50);
         profileImageView.setClip(clip);
 
@@ -57,26 +58,36 @@ public class ProfileController {
     @FXML
     private void handleSave() {
         try {
+            // Update user fields
             currentUser.setNom(nomField.getText());
             currentUser.setPrenom(prenomField.getText());
             currentUser.setEmail(emailField.getText());
             currentUser.setNumeroTelephone(telephoneField.getText());
 
+            // If a new image was chosen, copy it and update the user
             if (selectedImageFile != null) {
-                File destDir = new File(System.getProperty("user.dir") + File.separator + "profile_images");
+                File destDir = new File(System.getProperty("user.dir"), "profile_images");
                 if (!destDir.exists()) destDir.mkdirs();
 
-                String extension = selectedImageFile.getName().substring(selectedImageFile.getName().lastIndexOf("."));
-                String uniqueFileName = "user_" + currentUser.getId() + "_" + System.currentTimeMillis() + extension;
+                String extension = selectedImageFile.getName()
+                        .substring(selectedImageFile.getName().lastIndexOf("."));
+                String uniqueFileName =
+                        "user_" + currentUser.getId() + "_" + System.currentTimeMillis() + extension;
                 File destFile = new File(destDir, uniqueFileName);
 
-                Files.copy(selectedImageFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(selectedImageFile.toPath(),
+                        destFile.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
 
-                // Store relative path like "profile_images/user_3_1715281987.jpg"
                 currentUser.setProfilePicture("profile_images" + File.separator + uniqueFileName);
             }
 
+            // Persist changes
             userServices.modifier(currentUser);
+
+            // **NEW** Refresh the top‐bar avatar immediately
+            MainApp.LAYOUT_CONTROLLER.refreshTopbarProfileImage();
+
             showAlert("Succès", "Profil mis à jour !");
         } catch (IOException e) {
             e.printStackTrace();

@@ -46,7 +46,7 @@ public class QRLoginHttpServer {
         try {
             Optional<User> userOpt = authService.login(email, password);
             if (userOpt.isPresent()) {
-                String response = "Login successful";
+                String response = "OK";  // ✅ This must match what PHP expects
                 exchange.sendResponseHeaders(200, response.length());
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(response.getBytes());
